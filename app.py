@@ -51,10 +51,31 @@ def predict():
         best_model = metrics_df["Accuracy"].idxmax()
         best_model_accuracy = metrics_df.loc[best_model, "Accuracy"]
 
+        # Include all additional performance metrics
+        best_model_metrics = metrics_dict[best_model]
+        additional_metrics = {
+            "Accuracy": best_model_metrics.get("Accuracy", "N/A"),
+            "Precision": best_model_metrics.get("Precision", "N/A"),
+            "Recall": best_model_metrics.get("Recall", "N/A"),
+            "F1-Score": best_model_metrics.get("F1-Score", "N/A"),
+            "ROC-AUC": best_model_metrics.get("ROC-AUC", "N/A"),
+            "Log Loss": best_model_metrics.get("Log Loss", "N/A"),
+            "MAE": best_model_metrics.get("MAE", "N/A"),
+            "MSE": best_model_metrics.get("MSE", "N/A"),
+            "RMSE": best_model_metrics.get("RMSE", "N/A"),
+            "R² Score": best_model_metrics.get("R² Score", "N/A"),
+            "Cohen’s Kappa": best_model_metrics.get("Cohen’s Kappa", "N/A"),
+            "Balanced Accuracy": best_model_metrics.get("Balanced Accuracy", "N/A"),
+            "Hinge Loss": best_model_metrics.get("Hinge Loss", "N/A"),
+            "Gini Coefficient": best_model_metrics.get("Gini Coefficient", "N/A"),
+            "Chi-Square (Z²)": best_model_metrics.get("Chi-Square (Z²)", "N/A")
+        }
+
         return jsonify({
             "predictions": predictions,
             "metrics": metrics_dict,
-            "final_recommendation": f"The best performing model is '{best_model}' with an accuracy of {best_model_accuracy:.2%}."
+            "final_recommendation": f"The best performing model is '{best_model}' with an accuracy of {best_model_accuracy:.2%}.",
+            "additional_metrics": additional_metrics
         })
 
     except Exception as e:
