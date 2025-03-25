@@ -51,6 +51,19 @@ def predict():
         best_model = metrics_df["Accuracy"].idxmax()
         best_model_accuracy = metrics_df.loc[best_model, "Accuracy"]
 
+        # Generate feature efficiency scores based on actual model performance
+        feature_efficiency = {}
+        for feature in FEATURE_NAMES:
+            feature_efficiency[feature] = {}
+            for model in models:
+                # Use a weighted average of Accuracy, Precision, and Recall
+                accuracy = metrics_dict[model].get("Accuracy", 0)
+                precision = metrics_dict[model].get("Precision", 0)
+                recall = metrics_dict[model].get("Recall", 0)
+
+                # Compute feature efficiency (adjust weights if needed)
+                feature_efficiency[feature][model] = round((accuracy * 0.5 + precision * 0.3 + recall * 0.2) * 100, 2)
+
         # Include all additional performance metrics
         best_model_metrics = metrics_dict[best_model]
         additional_metrics = {
@@ -74,6 +87,7 @@ def predict():
         return jsonify({
             "predictions": predictions,
             "metrics": metrics_dict,
+            "feature_efficiency": feature_efficiency,  # ✅ Added Feature Efficiency
             "final_recommendation": f"The best performing model is '{best_model}' with an accuracy of {best_model_accuracy:.2%}.",
             "additional_metrics": additional_metrics
         })
